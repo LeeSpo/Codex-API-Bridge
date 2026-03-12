@@ -1,0 +1,9 @@
+node_modules/
+*.log
+.DS_Store
+
+data/
+.tmp-test/
+
+credentials.json
+*.local

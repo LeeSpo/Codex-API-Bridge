@@ -1,0 +1,16 @@
+{
+  "name": "codex-openai-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenAI-compatible bridge for ChatGPT Codex backend",
+  "scripts": {
+    "start": "node src/cli.js server",
+    "login": "node src/cli.js login",
+    "whoami": "node src/cli.js whoami",
+    "mock:codex": "node test/mock-codex-server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
