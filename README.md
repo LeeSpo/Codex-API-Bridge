@@ -152,4 +152,4 @@ ghcr.io/leespo/codex-api-bridge
 - This is built for personal/self-hosted use.
 - Upstream Codex is not a stable public OpenAI Platform endpoint; expect breakage when OpenAI changes headers/events/fields.
 - Tool support is intentionally minimal but usable for LiteLLM-style chat-completions and responses flows.
-- Token-cap request fields such as `max_tokens`, `max_completion_tokens`, and `max_output_tokens` are accepted for compatibility, but are currently dropped before forwarding because the ChatGPT-backed Codex upstream rejects them.
+- Several OpenAI-style compatibility fields are accepted but currently dropped before forwarding because the ChatGPT-backed Codex upstream rejects them explicitly. This currently includes token-cap fields (`max_tokens`, `max_completion_tokens`, `max_output_tokens`) and sampling fields (`temperature`, `top_p`, `presence_penalty`, `frequency_penalty`).

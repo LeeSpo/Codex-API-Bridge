@@ -277,12 +277,16 @@ function applyCommonCodexDefaults(body, requestBody) {
     body.top_p = requestBody.top_p;
   }
 
-  // ChatGPT-backed Codex currently rejects token-cap fields like max_output_tokens.
-  // For OpenAI-compatible callers (e.g. LiteLLM), prefer compatibility over strict
-  // passthrough and silently drop these request-side limits on the upstream call.
+  // ChatGPT-backed Codex currently rejects several explicit OpenAI sampling / token-cap
+  // fields on the request body. For OpenAI-compatible callers (e.g. LiteLLM), prefer
+  // compatibility over strict passthrough and silently drop them on the upstream call.
   delete body.max_output_tokens;
   delete body.max_tokens;
   delete body.max_completion_tokens;
+  delete body.temperature;
+  delete body.top_p;
+  delete body.presence_penalty;
+  delete body.frequency_penalty;
 
   const text = typeof body.text === "object" && body.text !== null ? { ...body.text } : {};
   if (!text.verbosity) {
