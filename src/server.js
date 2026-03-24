@@ -16,6 +16,7 @@ import {
   responsesToCodexBody,
   toolCallsForChatCompletion,
   usageFromCodexResponse,
+  validatePromptCacheKey,
 } from "./transform.js";
 import { getBridgeApiKey, getCredentialsPath, getDefaultModel, getListenPort, getModels, shortError } from "./utils.js";
 
@@ -132,8 +133,14 @@ function writeEventStreamHeaders(res) {
   });
 }
 
-function resolveSessionId(req, requestBody) {
-  return req.headers["x-session-id"] || requestBody?.prompt_cache_key || requestBody?.user || requestBody?.previous_response_id || undefined;
+export function resolveSessionId(req, requestBody) {
+  return (
+    req.headers["x-session-id"] ||
+    validatePromptCacheKey(requestBody?.prompt_cache_key) ||
+    requestBody?.user ||
+    requestBody?.previous_response_id ||
+    undefined
+  );
 }
 
 async function streamChatCompletion(res, upstreamResponse, requestBody) {

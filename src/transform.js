@@ -8,6 +8,7 @@ const CODEX_RESPONSE_STATUSES = new Set([
   "queued",
   "in_progress",
 ]);
+const MAX_PROMPT_CACHE_KEY_LENGTH = 64;
 
 function textPart(text) {
   return {
@@ -35,6 +36,14 @@ function userImagePart(imageUrl, detail = "auto") {
 function normalizeCodexStatus(status) {
   if (typeof status !== "string") return undefined;
   return CODEX_RESPONSE_STATUSES.has(status) ? status : undefined;
+}
+
+export function validatePromptCacheKey(value) {
+  if (typeof value !== "string") return undefined;
+  const stringValue = value.trim();
+  if (!stringValue) return undefined;
+  if (stringValue.length > MAX_PROMPT_CACHE_KEY_LENGTH) return undefined;
+  return stringValue;
 }
 
 function mergeInclude(existing = [], extra = []) {
@@ -304,8 +313,11 @@ function applyCommonCodexDefaults(body, requestBody) {
     body.reasoning = requestBody.reasoning;
   }
 
-  if (!body.prompt_cache_key && requestBody?.user) {
-    body.prompt_cache_key = String(requestBody.user);
+  const promptCacheKey = validatePromptCacheKey(body.prompt_cache_key ?? requestBody?.prompt_cache_key);
+  if (promptCacheKey) {
+    body.prompt_cache_key = promptCacheKey;
+  } else {
+    delete body.prompt_cache_key;
   }
 
   return body;
@@ -666,7 +678,7 @@ export function buildResponsesResponse(acc) {
     max_output_tokens: meta.max_output_tokens ?? null,
     previous_response_id: meta.previous_response_id ?? requestBody.previous_response_id ?? null,
     prompt: meta.prompt ?? requestBody.prompt ?? null,
-    prompt_cache_key: meta.prompt_cache_key ?? requestBody.prompt_cache_key ?? requestBody.user ?? undefined,
+    prompt_cache_key: validatePromptCacheKey(meta.prompt_cache_key ?? requestBody.prompt_cache_key),
     prompt_cache_retention: meta.prompt_cache_retention ?? requestBody.prompt_cache_retention ?? null,
     reasoning: meta.reasoning ?? requestBody.reasoning ?? null,
     safety_identifier: meta.safety_identifier ?? requestBody.safety_identifier ?? undefined,
