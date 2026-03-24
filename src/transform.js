@@ -296,6 +296,7 @@ function applyCommonCodexDefaults(body, requestBody) {
   delete body.top_p;
   delete body.presence_penalty;
   delete body.frequency_penalty;
+  delete body.user;
 
   const text = typeof body.text === "object" && body.text !== null ? { ...body.text } : {};
   if (!text.verbosity) {

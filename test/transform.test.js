@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { buildResponsesResponse, chatCompletionsToCodexBody } from "../src/transform.js";
+import { buildResponsesResponse, chatCompletionsToCodexBody, responsesToCodexBody } from "../src/transform.js";
 
 test("does not derive prompt_cache_key from user values", () => {
   const user = "user-".repeat(30);
@@ -58,4 +58,16 @@ test("drops invalid explicit prompt_cache_key values", () => {
   });
 
   assert.equal(response.prompt_cache_key, undefined);
+});
+
+test("does not pass user through to codex responses requests", () => {
+  const requestBody = {
+    model: "gpt-5.4",
+    user: '{"device_id":"abc","session_id":"def"}',
+    input: "hello",
+  };
+
+  const body = responsesToCodexBody(requestBody);
+
+  assert.equal(body.user, undefined);
 });
